@@ -107,7 +107,7 @@ SUPER_ADMIN_PIN= # Must be a 6-digit pin
 
 ##  Folder Structure
 
-
+```folder Stucture
 src/
 ├── app/
 │   ├── config/             # Database, token, bcrypt configs

@@ -2,9 +2,11 @@
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
-import { updateStatusService } from "./wallet.service"
+import { getMyWalletService, updateWalletStatusService } from "./wallet.service"
 import { Wallet } from "./wallet.model"
 import AppError from "../../ErrorHelpers/AppError"
+import { verifyToken } from "../../utils/jwt"
+import { User } from "../user/user.model"
 
 
 
@@ -12,7 +14,7 @@ import AppError from "../../ErrorHelpers/AppError"
 // Get Wallet
 export const getWallet = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
 
-    const id = req.params.id
+    const id = req.params.walletId
 
     if(id){
         const walletInfo = await Wallet.findById(id).populate("userId")
@@ -44,6 +46,27 @@ export const getWallet = catchAsync(async(req: Request, res: Response, next: Nex
 
 
 
+//  Get Self wallet
+export const getMyWallet = catchAsync( async(req: Request, res: Response, next: NextFunction) => {
+
+    const accessToken = req.cookies.accessToken
+    const wallets = await getMyWalletService(accessToken)
+    
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Transactions Retrived Successfully",
+        data: wallets
+    })
+})
+
+
+
+
+
+
+
+
 
 // Update wallet Status
 export const updateWalletStatus = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
@@ -51,12 +74,12 @@ export const updateWalletStatus = catchAsync(async(req: Request, res: Response, 
     const id = req.params.userId
     const updatedStatus = req.body.status
 
-    const updatedWallet = await updateStatusService(id, updatedStatus)
+    const updatedWallet = await updateWalletStatusService(id, updatedStatus)
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Wallet Status Updated Successfully",
+        message: "Wallet Updated Successfully",
         data: updatedWallet
     })
 })

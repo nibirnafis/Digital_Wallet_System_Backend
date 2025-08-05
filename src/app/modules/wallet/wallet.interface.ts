@@ -3,6 +3,7 @@ import { ObjectId } from "mongoose"
 export enum WalletStatus {
     ACTIVE = "ACTIVE",
     INACTIVE = "INACTIVE",
+    DELETED = "DELETED",
     PENDING = "PENDING",
     BLOCKED = "BLOCKED",
     SUSPENDED = "SUSPENDED",

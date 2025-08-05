@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
-import { changePin, createUserService, deleteUserStatusService, updateUserStatusService } from "./user.service"
+import { changePin, createUserService, deleteUserStatusService, getMyInfoService, updateUserStatusService } from "./user.service"
 import { User } from "./user.model"
 import AppError from "../../ErrorHelpers/AppError"
 
@@ -66,6 +66,31 @@ export const getUser = catchAsync(async(req: Request, res: Response, next: NextF
 
 
 
+
+
+
+//  Get my info
+export const getMyInfo = catchAsync( async(req: Request, res: Response, next: NextFunction) => {
+
+    const accessToken = req.cookies.accessToken
+    const myInfo = await getMyInfoService(accessToken)
+    
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "My Info Retrived Successfully",
+        data: myInfo
+    })
+})
+
+
+
+
+
+
+
+
+
 // Reset Pin 
 export const resetUserPin = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
 
@@ -89,14 +114,14 @@ export const resetUserPin = catchAsync(async(req: Request, res: Response, next: 
 // Update User Status
 export const updateUserStatus = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
 
-    const id = req.params.userId
-    const updatedStatus = req.body
-    const result = await updateUserStatusService(id, updatedStatus)
+    const userId = req.params.id
+    const updatedStatus = req.body.isBlocked
+    const result = await updateUserStatusService(userId, updatedStatus)
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "User Created Successfully",
+        message: "User Status Updated Successfully",
         data: result
     })
 })
@@ -105,16 +130,16 @@ export const updateUserStatus = catchAsync(async(req: Request, res: Response, ne
 
 
 
-// Update User Status
+// Delete User
 export const deleteUser = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
 
-    const id = req.params.userId
-    const result = await deleteUserStatusService(id)
+    const userId = req.params.id
+    const result = await deleteUserStatusService(userId)
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "User Created Successfully",
+        message: "User Deleted Successfully",
         data: result
     })
 })

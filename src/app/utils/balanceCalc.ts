@@ -36,7 +36,7 @@ export const transactionCalculation = async(payload: JwtPayload, endpoint: strin
 
     // reciever
     const recieverNewBalance = recieverWallet.balance + payload.amount
-    const recieverUpdatedWallet = await Wallet.findByIdAndUpdate(recieverWallet._id, {balance: recieverNewBalance}, { new: true })
+    await Wallet.findByIdAndUpdate(recieverWallet._id, {balance: recieverNewBalance}, { new: true })
 
     const recieverTransactionPayload: ITransaction = {
         userId: recieverWallet.userId,
@@ -48,13 +48,11 @@ export const transactionCalculation = async(payload: JwtPayload, endpoint: strin
     }
     
 
-    const recieverTransaction = await Transaction.create(recieverTransactionPayload)
+    await Transaction.create(recieverTransactionPayload)
 
     return {
         senderUpdatedWallet,
         senderTransaction,
-        recieverUpdatedWallet,
-        recieverTransaction
     }
 }
 

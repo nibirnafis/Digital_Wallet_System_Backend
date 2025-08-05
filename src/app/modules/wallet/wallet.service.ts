@@ -1,12 +1,14 @@
+import { JwtPayload } from "jsonwebtoken"
 import AppError from "../../ErrorHelpers/AppError"
 import { checkUserStatus } from "../../utils/checkStatus"
+import { verifyToken } from "../../utils/jwt"
 import { User } from "../user/user.model"
 import { Wallet } from "./wallet.model"
 
 
 
 
-export const updateStatusService = async(id: string, updatedStatus: string) => {
+export const updateWalletStatusService = async(id: string, updatedStatus: string) => {
 
     const isUserExist = await User.findById(id)
     
@@ -30,4 +32,29 @@ export const updateStatusService = async(id: string, updatedStatus: string) => {
 
     
     return updatedWallet
+}
+
+
+
+
+
+
+
+
+// get self wallet
+export const getMyWalletService = async(accessToken: string) => {
+
+    const verifiedToken = verifyToken(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET as string) as JwtPayload
+    const isUserExist = await User.findById({_id: verifiedToken.userId})
+
+    if(!isUserExist){
+        throw new AppError(401, "User Does Not Exist")
+    }
+
+    const wallets = await Wallet.aggregate([
+        { $match: { userId: isUserExist._id } },
+    ])
+
+
+    return wallets
 }

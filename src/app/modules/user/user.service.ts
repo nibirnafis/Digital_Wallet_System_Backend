@@ -7,7 +7,6 @@ import { IUser, Role } from "./user.interface"
 import { User } from "./user.model"
 import bcryptjs from "bcryptjs"
 import { checkUserStatus } from "../../utils/checkStatus"
-import { updateStatusService } from "../wallet/wallet.service"
 
 
 
@@ -48,6 +47,20 @@ export const createUserService = async (user: IUser) => {
 
 
 
+//  Get Self info
+export const getMyInfoService = async(accessToken: string) => {
+
+    const verifiedToken = verifyToken(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET as string) as JwtPayload
+    const isUserExist = await User.findById({_id: verifiedToken.userId})
+
+    if(!isUserExist){
+        throw new AppError(401, "User Does Not Exist")
+    }
+
+    const userInfo = await User.findById(isUserExist._id).populate("wallet")
+
+    return userInfo
+}
 
 
 
@@ -122,7 +135,14 @@ export const deleteUserStatusService = async(id: string) => {
     }
     
     const deletedUser = await User.findByIdAndUpdate(isUserExist._id, {isDeleted: true}, { new: true })
-    const deletedWallet = await updateStatusService(id, WalletStatus.INACTIVE)
+
+    const isWalletExist = await Wallet.findById(isUserExist.wallet)
+
+    if(!isWalletExist){
+        throw new AppError(403, "Wallet Does Not Exit")
+    }
+
+    const deletedWallet = await Wallet.findByIdAndUpdate(isWalletExist._id, {status: WalletStatus.DELETED}, { new: true })
 
     return {
         deletedUser,

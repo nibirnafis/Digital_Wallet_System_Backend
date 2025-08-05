@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "../user/user.interface";
 import { checkAuth } from "../../middlewares/checkAuth";
-import { addMoney, getSelfTransaction, getTransaction, transferMoney } from "./transaction.controler";
+import { addMoney, getMyTransaction, getTransaction, transferMoney } from "./transaction.controler";
 import { validateSchema } from "../../middlewares/validateRequest";
 import { addMoneySchema, tranferMoneySchema } from "./transaction.validation";
 
@@ -19,5 +19,8 @@ transactionRoutes.post('/add-money/:type', checkAuth(Role.USER, Role.AGENT), val
 
 
 transactionRoutes.get('/get-transaction', checkAuth(Role.SUPERADMIN, Role.ADMIN), getTransaction)
-transactionRoutes.get('/get-transaction/:id', checkAuth(Role.SUPERADMIN, Role.ADMIN), getTransaction)
-transactionRoutes.get('/get-transaction-me', checkAuth(Role.USER, Role.AGENT), getSelfTransaction)
+transactionRoutes.get('/get-transaction/:userId', checkAuth(Role.SUPERADMIN, Role.ADMIN), getTransaction)
+transactionRoutes.get('/get-transaction-me', checkAuth(Role.USER, Role.AGENT), getMyTransaction)
+
+
+

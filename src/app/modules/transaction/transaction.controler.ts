@@ -2,9 +2,10 @@
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
-import { addMoneyService, getSelfTransactionService, transferService } from "./transaction.service"
+import { addMoneyService, getMyTransactionService, transferService } from "./transaction.service"
 import AppError from "../../ErrorHelpers/AppError"
 import { Transaction } from "./transaction.model"
+import { User } from "../user/user.model"
 
 
 
@@ -24,6 +25,8 @@ export const transferMoney = catchAsync( async(req: Request, res: Response, next
         data: result
     })
 })
+
+
 
 
 
@@ -47,30 +50,43 @@ export const addMoney = catchAsync( async(req: Request, res: Response, next: Nex
 
 
 
+
+
 //  Get Transactions
 export const getTransaction = catchAsync( async(req: Request, res: Response, next: NextFunction) => {
     
-    const id = req.params.id
+    const userId = req.params.userId
 
-    if(id){
-        const transaction = await Transaction.findById(id).populate('from', 'to')
+    if(userId){
+
+        const isUserExist = await User.findById(userId)
+    
+        if(!isUserExist){
+            throw new AppError(403, "User Does Not Exit")
+        }
+
+        const transaction = await Transaction.aggregate([
+            { $match: { userId: isUserExist._id } }
+        ])
 
         if(!transaction){
-            throw new AppError(401, "Transaction Does Not Exist")
+            throw new AppError(401, "User Does Not Have ANY Transaction")
         }
     
         sendResponse(res, {
             statusCode: 200,
             success: true,
-            message: "Transaction Retrived Successfully",
+            message: "USER's Transaction Retrived Successfully",
             data: transaction
         })
     }
 
-    const transactions = await Transaction.find().populate('from', 'to')
+
+    const transactions = await Transaction.find().populate("userId")
+
 
     if(!transactions){
-        throw new AppError(401, "No User Exist")
+        throw new AppError(401, "No Transiction Exist")
     }
 
 
@@ -90,10 +106,10 @@ export const getTransaction = catchAsync( async(req: Request, res: Response, nex
 
 
 //  Get Self Transactions
-export const getSelfTransaction = catchAsync( async(req: Request, res: Response, next: NextFunction) => {
+export const getMyTransaction = catchAsync( async(req: Request, res: Response, next: NextFunction) => {
 
     const accessToken = req.cookies.accessToken
-    const transactions = await getSelfTransactionService(accessToken)
+    const transactions = await getMyTransactionService(accessToken)
     
     sendResponse(res, {
         statusCode: 200,

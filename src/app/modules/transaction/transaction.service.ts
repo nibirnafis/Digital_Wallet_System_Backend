@@ -100,10 +100,8 @@ export const addMoneyService = async(accessToken: string, addMoneyEndpoint: stri
 
 
 
-
-
 // get self transactions
-export const getSelfTransactionService = async(accessToken: string) => {
+export const getMyTransactionService = async(accessToken: string) => {
 
     const verifiedToken = verifyToken(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET as string) as JwtPayload
     const isUserExist = await User.findById({_id: verifiedToken.userId})
@@ -113,8 +111,7 @@ export const getSelfTransactionService = async(accessToken: string) => {
     }
 
     const transactions = await Transaction.aggregate([
-        { $group: { _id: isUserExist._id } },
-        { $project: { type: "$" }}
+        { $match: { userId: isUserExist._id } },
     ])
 
     return transactions

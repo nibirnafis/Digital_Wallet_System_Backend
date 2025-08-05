@@ -105,21 +105,3 @@ SUPER_ADMIN_PIN= # Must be a 6-digit pin
 
 ---
 
-##  Folder Structure
-
-
-src/
-├── app/
-│   ├── config/             # Database, token, bcrypt configs
-│   ├── ErrorHelpers/       # Custom error classes and handlers
-│   ├── middlewares/        # Global middlewares (auth, error handler, etc.)
-│   ├── modules/            # Core modules by feature
-│   │   ├── auth/           # Authentication logic
-│   │   ├── transaction/    # Transaction handling logic
-│   │   ├── wallet/         # Wallet operations
-│   │   └── user/           # User-related controllers and services
-│   ├── routes/             # Route handlers per module
-│   └── utils/              # Utility functions and helpers
-├── app.ts                  # Express app configuration
-└── server.ts               # Server entry point
-

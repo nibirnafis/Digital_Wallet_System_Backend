@@ -18,6 +18,12 @@ Live Link: https://digital-wallet-system-backend-znuw.onrender.com/
 
 ---
 
+## 🛠 Deploy
+
+- **Render**
+
+---
+
 ## 🚀 Key Features
 
 ### 👥 Roles

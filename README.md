@@ -49,30 +49,30 @@ Live Link: https://digital-wallet-system-backend-znuw.onrender.com/
 ## 📂 API Endpoints Overview
 
 ### 🔐 Auth Routes (`/api/v1/auth`)
-- `POST /login`
+- `POST /login` (phone, pin)
 - `POST /logout`
 
 ### 👤 User Routes (`/api/v1/user`)
-- `POST /create-user`
-- `POST /create-admin`
+- `POST /create-user` (phone, pin)
+- `POST /create-admin` (phone, pin)
 - `GET /get-user`
 - `GET /get-user/:id`
 - `GET /get-info-me`
-- `PATCH /update-status/:id`
-- `PATCH /delete-user/:id`
-- `PATCH /reset-pin`
+- `PATCH /update-status/:id` (isBlocked: true/false)
+- `PATCH /delete-user/:id` 
+- `PATCH /reset-pin` (oldPin, newPin)
 
 ### 💼 Wallet Routes (`/api/v1/wallet`)
 - `GET /get-wallet`
 - `GET /get-wallet/:walletId`
 - `GET /get-wallet-me`
-- `PATCH /update-status/:userId`
+- `PATCH /update-status/:userId` (status: 'ACTIVE' or 'INACTIVE' or 'PENDING' or 'BLOCKED' or 'SUSPENDED')
 
 ### 💸 Transaction Routes (`/api/v1/transaction`)
-- `POST /send-money`
-- `POST /cash-in`
-- `POST /cash-out`
-- `POST /add-money/bank-transfer`
+- `POST /send-money` (phone, amount)
+- `POST /cash-in` (phone, amount)
+- `POST /cash-out` (phone, amount)
+- `POST /add-money/bank-transfer` (amount)
 - `GET /get-transaction`
 - `GET /get-transaction/:userId`
 - `GET /get-transaction-me`
@@ -97,28 +97,29 @@ BCRYPT_SALT_ROUND=10
 JWT_ACCESS_TOKEN_SECRET=your_access_token_secret
 JWT_ACCESS_TOKEN_EXPIRE=1d
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
-JWT_REFRESH_TOKEN_EXPIRE=7d
+JWT_REFRESH_TOKEN_EXPIRE=10d
 
 # Super Admin Setup
-SUPER_ADMIN_PHONE= Must be a 13-digit phone number
+SUPER_ADMIN_PHONE= # Must be a 13-digit phone number
 SUPER_ADMIN_PIN= # Must be a 6-digit pin
 
 ---
 
 ##  Folder Structure
 
-```folder Stucture
 src/
-├── app/
-│   ├── config/             # Database, token, bcrypt configs
-│   ├── ErrorHelpers/       # Custom error classes and handlers
-│   ├── middlewares/        # Global middlewares (auth, error handler, etc.)
-│   ├── modules/            # Core modules by feature
-│   │   ├── auth/           # Authentication logic
-│   │   ├── transaction/    # Transaction handling logic
-│   │   ├── wallet/         # Wallet operations
-│   │   └── user/           # User-related controllers and services
-│   ├── routes/             # Route handlers per module
-│   └── utils/              # Utility functions and helpers
-├── app.ts                  # Express app configuration
-└── server.ts               # Server entry point
+├── app
+│   ├── config/
+│   ├── ErrorHelpers/
+│   ├── middlewares/
+│   ├── modules/            
+│   │   ├── auth/        
+│   │   ├── transaction/    
+│   │   ├── wallet/         
+│   │   └── user/           
+│   ├── routes/             
+│   └── utils/            
+├── app.ts                
+└── server.ts
+
+---

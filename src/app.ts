@@ -6,8 +6,9 @@ import cookieParser from "cookie-parser";
 
 export const app: Application = express()
 
+// origin: ["http://localhost:5173", "https://digital-wallet-system-frontend-two.vercel.app"],
 app.use(cors({
-    origin: ["http://localhost:5173", "https://digital-wallet-system-frontend-two.vercel.app"],
+    origin: "https://digital-wallet-system-frontend-two.vercel.app",
     credentials: true
 }
 ))

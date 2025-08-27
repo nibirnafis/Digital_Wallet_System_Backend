@@ -4,6 +4,7 @@ import AppError from "../ErrorHelpers/AppError";
 
 
 
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) =>{
 

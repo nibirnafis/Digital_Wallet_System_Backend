@@ -19,7 +19,8 @@ export const transactionCalculation = async(payload: JwtPayload, endpoint: strin
     if(senderNewBalance < 0){
         throw new AppError(401, "Insuficient Balance")
     }
-    const senderUpdatedWallet = await Wallet.findByIdAndUpdate(senderWallet._id, {balance: senderNewBalance}, { new: true })
+    const senderUpdatedWallet = await Wallet.findByIdAndUpdate(senderWallet._id, {balance: senderNewBalance}, { new: true }).populate('userId')
+    console.log(senderUpdatedWallet)
 
     const senderTransactionPayload: ITransaction = {
         userId: senderWallet.userId,
@@ -30,7 +31,8 @@ export const transactionCalculation = async(payload: JwtPayload, endpoint: strin
         status: transactionStatus.COMPLETED
     }
 
-    const senderTransaction = await Transaction.create(senderTransactionPayload)
+    const createdSenderTransaction = await Transaction.create(senderTransactionPayload)
+    const senderTransaction = await Transaction.findById(createdSenderTransaction._id).populate(["userId", "from", "to"])
 
 
 
@@ -69,6 +71,7 @@ export const addMoneyCalculation = async(payload: JwtPayload, addMoneyEndpoint: 
     //  Sender
     const endPoints: string[] = Object.values(addMoneyEndPoints)
 
+
     if(!endPoints.includes(addMoneyEndpoint)){
         throw new AppError(401, 'This Service Is Not Available')
     }
@@ -77,7 +80,7 @@ export const addMoneyCalculation = async(payload: JwtPayload, addMoneyEndpoint: 
 
     // reciever
     const recieverNewBalance = recieverWallet.balance + payload.amount
-    const recieverUpdatedWallet = await Wallet.findByIdAndUpdate(recieverWallet._id, {balance: recieverNewBalance}, { new: true })
+    const recieverUpdatedWallet = await Wallet.findByIdAndUpdate(recieverWallet._id, {balance: recieverNewBalance}, { new: true }).populate('userId')
 
     const recieverTransactionPayload: ITransaction = {
         userId: recieverWallet.userId,

@@ -7,6 +7,7 @@ import { IUser, Role } from "./user.interface"
 import { User } from "./user.model"
 import bcryptjs from "bcryptjs"
 import { checkUserStatus } from "../../utils/checkStatus"
+import { Transaction } from "../transaction/transaction.model"
 
 
 
@@ -57,9 +58,29 @@ export const getMyInfoService = async(accessToken: string) => {
         throw new AppError(401, "User Does Not Exist")
     }
 
-    const userInfo = await User.findById(isUserExist._id).populate("wallet")
+    const userInfo = await User.findById(isUserExist._id).select('-pin').populate("wallet")
 
     return userInfo
+}
+
+
+
+// Search User
+export const searchUserService = async(phone: string) => {
+
+    const isUserExist = await User.findOne({phone: phone})
+
+    if(!isUserExist){
+        throw new AppError(401, "User Does Not Exist")
+    }
+
+    const userInfo = await User.findById(isUserExist._id).select('-pin').populate("wallet")
+    const userTransactions = await Transaction.find({userId: isUserExist._id}).sort({createdAt: -1}).populate(["userId", "from", "to"])
+
+    return {
+        userInfo,
+        userTransactions
+    }
 }
 
 
@@ -112,7 +133,7 @@ export const updateUserStatusService = async(id: string, updatedStatus: boolean,
         throw new AppError(403, `User's status is Already ${updatedStatus ? "BLOCKED" : "UNBLOCKED"}`)
     }
     
-    const updatedUser = await User.findByIdAndUpdate(isUserExist._id, {isBlocked: updatedStatus}, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(isUserExist._id, {isBlocked: updatedStatus}, { new: true }).select('-pin').populate("wallet")
 
     return updatedUser
 
@@ -138,15 +159,18 @@ export const deleteUserStatusService = async(id: string) => {
 
     const isWalletExist = await Wallet.findById(isUserExist.wallet)
 
-    if(!isWalletExist){
-        throw new AppError(403, "Wallet Does Not Exit")
+    if(isWalletExist){
+        const deletedWallet = await Wallet.findByIdAndUpdate(isWalletExist._id, {status: WalletStatus.DELETED}, { new: true })
+
+        return {
+        deletedUser,
+        deletedWallet
+    }
     }
 
-    const deletedWallet = await Wallet.findByIdAndUpdate(isWalletExist._id, {status: WalletStatus.DELETED}, { new: true })
 
     return {
         deletedUser,
-        deletedWallet
     }
 
 }

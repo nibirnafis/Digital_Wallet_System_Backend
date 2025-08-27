@@ -41,7 +41,7 @@ export const addMoney = catchAsync( async(req: Request, res: Response, next: Nex
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "User Created Successfully",
+        message: "Money Added Successfully",
         data: result
     })
 })

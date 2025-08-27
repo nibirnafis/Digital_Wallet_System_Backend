@@ -7,7 +7,8 @@ export const setCookie = (res: Response, tokens: JwtPayload) => {
     if(tokens.accessToken){
         res.cookie('accessToken', tokens.accessToken, {
             httpOnly: true,
-            secure: false
+            secure: true,
+            sameSite: "none"
         })
     }
     
@@ -15,7 +16,8 @@ export const setCookie = (res: Response, tokens: JwtPayload) => {
     if(tokens.refreshToken){
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,
-            secure: false
+            secure: true,
+            sameSite: "none"
         })
     }
 

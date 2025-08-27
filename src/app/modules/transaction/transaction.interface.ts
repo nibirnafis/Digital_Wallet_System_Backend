@@ -27,6 +27,7 @@ export enum transactionStatus {
 
 
 export interface ITransaction {
+    _id?: ObjectId,
     userId: ObjectId,
     type: string,
     amount: number,

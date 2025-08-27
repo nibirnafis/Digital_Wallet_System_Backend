@@ -9,5 +9,5 @@ export const AuthRoutes = Router()
 
 
 AuthRoutes.post('/login', validateSchema(userLoginSchema), loginUser)
-AuthRoutes.post('/refresh-token', getNewAccessToken)
-AuthRoutes.post('/logout', logoutUser)
+AuthRoutes.get('/refresh-token', getNewAccessToken)
+AuthRoutes.get('/logout', logoutUser)

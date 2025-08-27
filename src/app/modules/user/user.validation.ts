@@ -37,6 +37,14 @@ export const createAdminSchema = z.object({
 
 
 
+export const searchUserSchema = z.object({
+    phone: z
+        .string()
+        .regex(/^[0-9]+$/, "Only Number are allowed"),
+})
+
+
+
 export const resetPinSchema = z.object({
     oldPin: z
         .string("Pin Should be a Number")

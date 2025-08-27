@@ -18,5 +18,5 @@ export const tranferMoneySchema = z.object({
 export const addMoneySchema = z.object({
     amount: z
         .number("Amount Can't be a String")
-        .min(500, "Amount have to at least 10")
+        .min(500, "Amount have to be at least 500")
 })

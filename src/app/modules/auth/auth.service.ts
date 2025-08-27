@@ -13,7 +13,7 @@ const userLoginService = async (body: JwtPayload) => {
 
     const { phone, pin } = body
     
-    const isUserExist = await User.findOne({phone: phone})
+    const isUserExist = await User.findOne({phone: phone}).populate('wallet')
 
     if(!isUserExist){
         throw new AppError(401, "User Does Not Exist")

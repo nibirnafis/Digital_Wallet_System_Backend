@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
-import { changePin, createUserService, deleteUserStatusService, getMyInfoService, updateUserStatusService } from "./user.service"
+import { changePin, createUserService, deleteUserStatusService, getMyInfoService, searchUserService, updateUserStatusService } from "./user.service"
 import { User } from "./user.model"
 import AppError from "../../ErrorHelpers/AppError"
 
@@ -32,24 +32,9 @@ export const createUser = catchAsync(async(req: Request, res: Response, next: Ne
 // Get User
 export const getUser = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
 
-    const id = req.params.id
-
-    if(id){
-        const user = await User.findById(id).populate('wallet')
-
-        if(!user){
-            throw new AppError(401, "User Does Not Exist")
-        }
-    
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "User Retrived Successfully",
-            data: user
-        })
-    }
-
     const users = await User.find().populate('wallet')
+
+    console.log(users)
 
     if(!users){
         throw new AppError(401, "No User Exist")
@@ -60,6 +45,26 @@ export const getUser = catchAsync(async(req: Request, res: Response, next: NextF
         success: true,
         message: "Users Retrived Successfully",
         data: users
+    })
+})
+
+
+
+
+
+// Search User
+export const searchUser = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+
+    const phone = req.body.phone
+
+    const userInfo = await searchUserService(phone)
+
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User Retrived Successfully",
+        data: userInfo
     })
 })
 
@@ -140,6 +145,6 @@ export const deleteUser = catchAsync(async(req: Request, res: Response, next: Ne
         statusCode: 200,
         success: true,
         message: "User Deleted Successfully",
-        data: result
+        data: null
     })
 })
